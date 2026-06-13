@@ -14,20 +14,21 @@
 </head>
 <body>
   <header class="topbar">
-    <div>
+    <div class="titleBlock">
       <h1>Opportunity Intelligence OS</h1>
       <p>Find painful problems worth pursuing.</p>
     </div>
     <div class="headerActions">
-      <button id="themeBtn" class="ghost" title="Toggle theme">Theme</button>
+      <button id="themeBtn" class="ghost">Theme</button>
       <button id="exportBtn" class="ghost">Export</button>
-      <label class="importLabel ghost">Import<input id="importFile" type="file" accept="application/json"></label>
+      <label class="importLabel ghost">Import<input id="importFile" type="file" accept=".json,application/json,text/plain"></label>
     </div>
   </header>
 
   <nav class="tabs">
     <button class="tab active" data-tab="capture">Capture</button>
     <button class="tab" data-tab="portfolio">Portfolio</button>
+    <button class="tab" data-tab="import">Import</button>
     <button class="tab" data-tab="research">Research</button>
     <button class="tab" data-tab="commercial">Commercial</button>
   </nav>
@@ -54,6 +55,7 @@
             <option>Learning</option>
             <option>Hiring</option>
             <option>Time</option>
+            <option>Operations</option>
             <option>Other</option>
           </select>
         </label>
@@ -116,6 +118,19 @@
       </div>
       <div id="stats" class="stats"></div>
       <div id="list"></div>
+    </section>
+
+    <section id="import" class="panel">
+      <div class="card">
+        <h2>Mass Import</h2>
+        <p class="muted">Import a JSON array, an object with a records/data/items/problems array, or pasted JSON.</p>
+        <label>Paste JSON here<textarea id="importText" placeholder='[{"problem":"Lead Generation","category":"Revenue Generation"}]'></textarea></label>
+        <div class="actions">
+          <button id="validateImportBtn">Validate</button>
+          <button id="importTextBtn" class="ghost">Import Pasted JSON</button>
+        </div>
+        <div id="importReport" class="report">No import checked yet.</div>
+      </div>
     </section>
 
     <section id="research" class="panel">

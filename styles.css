@@ -9,10 +9,10 @@ body.light{
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding-bottom:34px}
 .topbar{position:sticky;top:0;z-index:5;background:color-mix(in srgb, var(--bg) 94%, transparent);backdrop-filter:blur(12px);padding:calc(12px + env(safe-area-inset-top)) 14px 12px;display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid var(--line)}
-h1{font-size:21px;margin:0 0 4px;line-height:1.15} h2{margin:0}
+h1{font-size:20px;margin:0 0 4px;line-height:1.15} h2{margin:0 0 6px}
 p{margin:0;color:var(--muted)}
 .headerActions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px;background:var(--bg);position:sticky;top:74px;z-index:4;border-bottom:1px solid var(--line)}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:10px;background:var(--bg);position:sticky;top:74px;z-index:4;border-bottom:1px solid var(--line)}
 .tab,.ghost,button,.importLabel{border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--card);color:var(--text);font-weight:650;font-size:14px}
 .tab.active,button:not(.ghost){background:var(--accent);color:var(--buttonText);border-color:var(--accent)}
 .importLabel input{display:none}
@@ -24,9 +24,10 @@ main{padding:12px;max-width:980px;margin:0 auto}
 label{display:block;color:var(--muted);font-size:13px;margin:12px 0}
 input,textarea,select{width:100%;margin-top:7px;border:1px solid var(--line);background:var(--field);color:var(--text);border-radius:12px;padding:13px 12px;font-size:16px;min-height:46px}
 textarea{min-height:82px;resize:vertical}
+#importText{min-height:240px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .dateGrid{display:grid;grid-template-columns:1.3fr 1fr;gap:8px;align-items:end}
-.actions,.toolbar{display:flex;gap:8px;align-items:center}
+.actions,.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .toolbar{margin-bottom:10px}.toolbar input{flex:1}.toolbar select{width:178px}
 .item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin:10px 0}
 .itemTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
@@ -42,12 +43,14 @@ textarea{min-height:82px;resize:vertical}
 .promptGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}
 #promptOutput{min-height:250px}
 ol{padding-left:22px;line-height:1.6}
-@media(max-width:700px){
+.report{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:12px;white-space:pre-wrap;color:var(--muted);background:var(--field)}
+@media(max-width:760px){
   .topbar{align-items:flex-start}
-  .headerActions{max-width:150px}
+  .titleBlock{max-width:58%}
+  .headerActions{max-width:160px}
   .grid,.dateGrid,.promptGrid{grid-template-columns:1fr}
-  .tabs{top:98px}
-  .tab{font-size:12px;padding:9px 4px}
+  .tabs{top:99px;overflow-x:auto}
+  .tab{font-size:11px;padding:9px 3px}
   .toolbar{flex-direction:column}
   .toolbar select{width:100%}
   .stats{grid-template-columns:1fr 1fr 1fr}

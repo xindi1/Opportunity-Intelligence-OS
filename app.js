@@ -1,10 +1,22 @@
-const KEY = "opportunity_intelligence_os_v3";
+const KEY = "opportunity_intelligence_os_v4";
+const OLD_KEYS = ["opportunity_intelligence_os_v3","opportunity_intelligence_os_v2"];
 const THEME_KEY = "opportunity_intelligence_theme";
 const $ = id => document.getElementById(id);
 
 const fields = ["id","problem","category","description","whoFeelsIt","pain","frequency","economic","spend","ai","interest","gap","reach","solutions","complaints","buyer","champion","businessModel","nextAction","followUpAt","status","notes"];
 
-function load(){ return JSON.parse(localStorage.getItem(KEY) || "[]"); }
+function load(){
+  let current = JSON.parse(localStorage.getItem(KEY) || "[]");
+  if(current.length) return current;
+  for(const k of OLD_KEYS){
+    const old = JSON.parse(localStorage.getItem(k) || "[]");
+    if(Array.isArray(old) && old.length){
+      localStorage.setItem(KEY, JSON.stringify(old));
+      return old;
+    }
+  }
+  return [];
+}
 function saveAll(data){ localStorage.setItem(KEY, JSON.stringify(data)); }
 
 function setTheme(theme){
@@ -26,6 +38,75 @@ function calcScore(d){
   const nums = ["pain","frequency","economic","spend","ai","interest","gap","reach"];
   const total = nums.reduce((s,k)=>s+(Number(d[k])||0),0);
   return Math.round((total / 80) * 100);
+}
+
+function normalizeRecord(raw, index=0){
+  const now = new Date().toISOString();
+  const d = {};
+  fields.forEach(f => d[f] = raw?.[f] ?? "");
+  d.problem = String(raw?.problem || raw?.name || raw?.title || raw?.categoryName || `Imported Problem ${index+1}`);
+  d.category = String(raw?.category || raw?.cluster || "Other");
+  d.description = String(raw?.description || raw?.underlyingProblem || raw?.problemDescription || "");
+  d.whoFeelsIt = String(raw?.whoFeelsIt || raw?.who_experiences_it || raw?.who || raw?.customer || "");
+  d.solutions = String(raw?.solutions || raw?.currentSolutions || raw?.softwareCategory || "");
+  d.complaints = String(raw?.complaints || raw?.commonComplaints || "");
+  d.buyer = String(raw?.buyer || raw?.likelyBuyer || "");
+  d.champion = String(raw?.champion || raw?.likelyChampion || "");
+  d.businessModel = String(raw?.businessModel || raw?.business_model || "");
+  d.nextAction = String(raw?.nextAction || raw?.next_action || "Research current solutions, customer complaints, buyer urgency, and niche entry points.");
+  d.status = String(raw?.status || "Captured");
+  d.notes = String(raw?.notes || "");
+  d.followUpAt = String(raw?.followUpAt || "");
+  ["pain","frequency","economic","spend","ai","interest","gap","reach"].forEach(f => {
+    const v = Number(raw?.[f]);
+    d[f] = Number.isFinite(v) ? Math.max(0, Math.min(10, v)) : 0;
+  });
+  d.id = String(raw?.id || crypto.randomUUID());
+  d.createdAt = raw?.createdAt || now;
+  d.updatedAt = raw?.updatedAt || now;
+  d.score = Number.isFinite(Number(raw?.score)) ? Number(raw.score) : calcScore(d);
+  return d;
+}
+
+function extractArray(parsed){
+  if(Array.isArray(parsed)) return parsed;
+  if(parsed && typeof parsed === "object"){
+    for(const key of ["records","data","items","problems","opportunities","results"]){
+      if(Array.isArray(parsed[key])) return parsed[key];
+    }
+  }
+  return null;
+}
+
+function parseImportText(text){
+  if(!text || !text.trim()) throw new Error("Import text is empty.");
+  let cleaned = text.trim();
+  cleaned = cleaned.replace(/^\uFEFF/, "");
+  const parsed = JSON.parse(cleaned);
+  const arr = extractArray(parsed);
+  if(!arr) throw new Error("Import must be a JSON array, or an object with records/data/items/problems/opportunities/results array.");
+  return arr;
+}
+
+function previewImport(text){
+  const arr = parseImportText(text);
+  const normalized = arr.map(normalizeRecord);
+  const missing = normalized.filter(r => !r.problem || r.problem.startsWith("Imported Problem")).length;
+  return {count: normalized.length, missing, normalized};
+}
+
+function importRecords(records){
+  const existing = load();
+  const seen = new Set(existing.map(r => String(r.problem).toLowerCase().trim()));
+  let added = 0, skipped = 0;
+  for(const r of records){
+    const key = String(r.problem).toLowerCase().trim();
+    if(key && seen.has(key)){ skipped++; continue; }
+    existing.push(r); seen.add(key); added++;
+  }
+  saveAll(existing);
+  render();
+  return {added, skipped, total: existing.length};
 }
 
 function formData(){
@@ -93,7 +174,7 @@ function render(){
   data = sortData(data, sort);
 
   const total = data.length;
-  const avg = total ? Math.round(data.reduce((s,d)=>s+d.score,0)/total) : 0;
+  const avg = total ? Math.round(data.reduce((s,d)=>s+(Number(d.score)||0),0)/total) : 0;
   const top = total ? data[0].score : 0;
   $("stats").innerHTML = `
     <div class="stat"><span class="small">Problems</span><strong>${total}</strong></div>
@@ -119,7 +200,7 @@ function render(){
       <button onclick='populate(${JSON.stringify(d).replaceAll("'","&#39;")})'>Edit</button>
       <button class="ghost" onclick="deleteProblem('${d.id}')">Delete</button>
     </div>
-  `).join("") || `<div class="card"><p>No problems yet. Add your first one.</p></div>`;
+  `).join("") || `<div class="card"><p>No problems yet. Add your first one or use Mass Import.</p></div>`;
 }
 
 function escapeHtml(str){
@@ -136,9 +217,7 @@ $("saveBtn").addEventListener("click", saveProblem);
 $("clearBtn").addEventListener("click", clearForm);
 $("search").addEventListener("input", render);
 $("sort").addEventListener("change", render);
-$("themeBtn").addEventListener("click", ()=>{
-  setTheme(document.body.classList.contains("light") ? "dark" : "light");
-});
+$("themeBtn").addEventListener("click", ()=> setTheme(document.body.classList.contains("light") ? "dark" : "light"));
 
 $("exportBtn").addEventListener("click", ()=>{
   const blob = new Blob([JSON.stringify(load(), null, 2)], {type:"application/json"});
@@ -151,12 +230,36 @@ $("exportBtn").addEventListener("click", ()=>{
 $("importFile").addEventListener("change", async e => {
   const file = e.target.files[0];
   if(!file) return;
-  const text = await file.text();
-  const imported = JSON.parse(text);
-  if(!Array.isArray(imported)) return alert("Import file must be a JSON array.");
-  saveAll(imported);
-  render();
-  alert("Import complete.");
+  try{
+    const text = await file.text();
+    $("importText").value = text;
+    const preview = previewImport(text);
+    $("importReport").textContent = `Valid JSON import detected.\nRecords found: ${preview.count}\nRecords with generated problem names: ${preview.missing}\nReady to import.`;
+    setTab("import");
+  } catch(err){
+    $("importReport").textContent = `Import validation failed:\n${err.message}`;
+    setTab("import");
+  }
+});
+
+$("validateImportBtn").addEventListener("click", ()=>{
+  try{
+    const preview = previewImport($("importText").value);
+    $("importReport").textContent = `Valid JSON import detected.\nRecords found: ${preview.count}\nRecords with generated problem names: ${preview.missing}\nReady to import.`;
+  } catch(err){
+    $("importReport").textContent = `Import validation failed:\n${err.message}`;
+  }
+});
+
+$("importTextBtn").addEventListener("click", ()=>{
+  try{
+    const preview = previewImport($("importText").value);
+    const result = importRecords(preview.normalized);
+    $("importReport").textContent = `Import complete.\nAdded: ${result.added}\nSkipped duplicates: ${result.skipped}\nTotal records now: ${result.total}`;
+    setTab("portfolio");
+  } catch(err){
+    $("importReport").textContent = `Import failed:\n${err.message}`;
+  }
 });
 
 const prompts = {
