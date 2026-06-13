@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d1117" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="OpportunityOS" />
+  <title>Opportunity Intelligence OS</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Opportunity Intelligence OS</h1>
+      <p>Find painful problems worth pursuing.</p>
+    </div>
+    <div class="headerActions">
+      <button id="themeBtn" class="ghost" title="Toggle theme">Theme</button>
+      <button id="exportBtn" class="ghost">Export</button>
+      <label class="importLabel ghost">Import<input id="importFile" type="file" accept="application/json"></label>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="capture">Capture</button>
+    <button class="tab" data-tab="portfolio">Portfolio</button>
+    <button class="tab" data-tab="research">Research</button>
+    <button class="tab" data-tab="commercial">Commercial</button>
+  </nav>
+
+  <main>
+    <section id="capture" class="panel active">
+      <div class="card">
+        <div class="cardHeader">
+          <h2 id="formTitle">New Problem</h2>
+          <div id="formMeta" class="timestamp">Not saved yet</div>
+        </div>
+        <input id="id" type="hidden" />
+
+        <label>Problem name<input id="problem" placeholder="e.g., Small businesses struggle to generate qualified leads"></label>
+        <label>Category
+          <select id="category">
+            <option>Revenue Generation</option>
+            <option>Attention & Information</option>
+            <option>Decision-Making</option>
+            <option>Coordination</option>
+            <option>Trust</option>
+            <option>Health Behavior</option>
+            <option>Relationships</option>
+            <option>Learning</option>
+            <option>Hiring</option>
+            <option>Time</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label>Description<textarea id="description" placeholder="What hurts? What is broken?"></textarea></label>
+        <label>Who feels it?<textarea id="whoFeelsIt" placeholder="Customer segments, roles, industries"></textarea></label>
+
+        <div class="grid">
+          <label>Pain<input id="pain" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+          <label>Frequency<input id="frequency" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+          <label>Economic impact<input id="economic" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+          <label>Existing spend<input id="spend" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+          <label>AI leverage<input id="ai" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+          <label>Founder interest<input id="interest" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+          <label>Competition gap<input id="gap" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+          <label>Reachability<input id="reach" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+        </div>
+
+        <label>Current solutions<textarea id="solutions" placeholder="Tools, services, workflows people use today"></textarea></label>
+        <label>Common complaints<textarea id="complaints" placeholder="Why current solutions fail"></textarea></label>
+        <label>Buyer<input id="buyer" placeholder="Who signs or controls budget?"></label>
+        <label>Champion<input id="champion" placeholder="Who feels the pain daily?"></label>
+        <label>Business model ideas<textarea id="businessModel" placeholder="Service, assessment, agent, SaaS, marketplace, advisory"></textarea></label>
+
+        <div class="dateGrid">
+          <label>Next action<input id="nextAction" placeholder="Research market, map buyers, conduct interview"></label>
+          <label>Follow-up date/time<input id="followUpAt" type="datetime-local"></label>
+        </div>
+
+        <label>Status
+          <select id="status">
+            <option>Captured</option>
+            <option>Researching</option>
+            <option>Scored</option>
+            <option>Prioritized</option>
+            <option>Validation</option>
+            <option>Outreach</option>
+            <option>Parked</option>
+          </select>
+        </label>
+        <label>Notes<textarea id="notes" placeholder="Freeform notes"></textarea></label>
+
+        <div class="actions">
+          <button id="saveBtn">Save Problem</button>
+          <button id="clearBtn" class="ghost">Clear</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="portfolio" class="panel">
+      <div class="toolbar">
+        <input id="search" placeholder="Search problems, buyers, notes..." />
+        <select id="sort">
+          <option value="score">Opportunity score</option>
+          <option value="pain">Pain</option>
+          <option value="spend">Existing spend</option>
+          <option value="ai">AI leverage</option>
+          <option value="interest">Founder interest</option>
+          <option value="updatedAt">Recently updated</option>
+        </select>
+      </div>
+      <div id="stats" class="stats"></div>
+      <div id="list"></div>
+    </section>
+
+    <section id="research" class="panel">
+      <div class="card">
+        <h2>Research Prompts</h2>
+        <p class="muted">Copy these into ChatGPT to enrich a selected problem.</p>
+        <div class="promptGrid">
+          <button class="promptBtn" data-prompt="discovery">Problem Discovery</button>
+          <button class="promptBtn" data-prompt="market">Market Scan</button>
+          <button class="promptBtn" data-prompt="buyer">Buyer Mapping</button>
+          <button class="promptBtn" data-prompt="solution">Solution Discovery</button>
+        </div>
+        <textarea id="promptOutput" readonly></textarea>
+        <button id="copyPromptBtn" class="ghost">Copy Prompt</button>
+      </div>
+    </section>
+
+    <section id="commercial" class="panel">
+      <div class="card">
+        <h2>Commercialization Filter</h2>
+        <p>Use this to decide whether a problem deserves active pursuit.</p>
+        <ol>
+          <li>Does the pain happen frequently?</li>
+          <li>Does the pain create economic cost?</li>
+          <li>Are people already spending money?</li>
+          <li>Are customers dissatisfied with current solutions?</li>
+          <li>Can AI improve speed, clarity, cost, or decision quality?</li>
+          <li>Can a buyer be identified?</li>
+          <li>Can a first conversation be started within 14 days?</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
