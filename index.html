@@ -1,25 +1,133 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0d1117"><meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="OpportunityOS">
-<title>Opportunity Intelligence OS</title><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="stylesheet" href="styles.css"></head>
-<body><header class="topbar"><div class="titleBlock"><h1>Opportunity Intelligence OS</h1><p>Find painful problems worth pursuing.</p></div><div class="headerActions"><button id="themeBtn" class="ghost">Theme</button><button id="exportBtn" class="ghost">Export</button><label class="importLabel ghost">Import<input id="importFile" type="file" accept=".json,application/json,text/plain"></label></div></header>
-<nav class="tabs"><button class="tab active" data-tab="capture">Capture</button><button class="tab" data-tab="portfolio">Portfolio</button><button class="tab" data-tab="clusters">Clusters</button><button class="tab" data-tab="weights">Weights</button><button class="tab" data-tab="import">Import</button><button class="tab" data-tab="research">Research</button></nav>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OpportunityOS">
+<title>Opportunity Intelligence OS</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="titleBlock">
+    <h1>Opportunity Intelligence OS</h1>
+    <p>Find painful problems worth pursuing.</p>
+  </div>
+  <div class="headerActions">
+    <button id="themeBtn" class="ghost">Theme</button>
+    <button id="exportBtn" class="ghost">Export</button>
+    <label class="importLabel ghost">Import<input id="importFile" type="file" accept=".json,application/json,text/plain"></label>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="dashboard">Today</button>
+  <button class="tab" data-tab="capture">Capture</button>
+  <button class="tab" data-tab="portfolio">Portfolio</button>
+  <button class="tab" data-tab="clusters">Clusters</button>
+  <button class="tab" data-tab="pipeline">Pipeline</button>
+  <button class="tab" data-tab="planner">Plan</button>
+  <button class="tab" data-tab="weights">Weights</button>
+  <button class="tab" data-tab="import">Import</button>
+  <button class="tab" data-tab="research">Research</button>
+</nav>
+
 <main>
-<section id="capture" class="panel active"><div class="card"><div class="cardHeader"><h2 id="formTitle">New Problem</h2><div id="formMeta" class="timestamp">Not saved yet</div></div><input id="id" type="hidden">
-<label>Problem name<input id="problem" placeholder="e.g., Manual repetitive work wastes time"></label>
-<label>Category<select id="category"><option>Revenue Generation</option><option>Attention & Information</option><option>Decision-Making</option><option>Coordination</option><option>Trust</option><option>Health Behavior</option><option>Relationships</option><option>Learning</option><option>Hiring</option><option>Time</option><option>Operations</option><option>Other</option></select></label>
-<label>Cluster<select id="cluster"><option>Revenue</option><option>Hiring</option><option>Operations</option><option>Health</option><option>Trust</option><option>Learning</option><option>Coordination</option><option>Decision Making</option><option>Attention</option><option>Relationships</option><option>Time</option><option>Other</option></select></label>
-<label>Tier<select id="tier"><option>Unranked</option><option>Tier 1 — Pursue</option><option>Tier 2 — Research</option><option>Tier 3 — Watchlist</option><option>Parked</option></select></label>
-<label>Description<textarea id="description"></textarea></label><label>Who feels it?<textarea id="whoFeelsIt"></textarea></label>
-<div class="grid"><label>Pain<input id="pain" type="number" min="1" max="10"></label><label>Frequency<input id="frequency" type="number" min="1" max="10"></label><label>Economic impact<input id="economic" type="number" min="1" max="10"></label><label>Existing spend<input id="spend" type="number" min="1" max="10"></label><label>AI leverage<input id="ai" type="number" min="1" max="10"></label><label>Founder interest<input id="interest" type="number" min="1" max="10"></label><label>Competition gap<input id="gap" type="number" min="1" max="10"></label><label>Reachability<input id="reach" type="number" min="1" max="10"></label></div>
-<label>Current solutions<textarea id="solutions"></textarea></label><label>Common complaints<textarea id="complaints"></textarea></label><label>Buyer<input id="buyer"></label><label>Champion<input id="champion"></label><label>Business model ideas<textarea id="businessModel"></textarea></label>
-<div class="dateGrid"><label>Next action<input id="nextAction"></label><label>Follow-up date/time<input id="followUpAt" type="datetime-local"></label></div>
-<label>Status<select id="status"><option>Captured</option><option>Researching</option><option>Scored</option><option>Prioritized</option><option>Validation</option><option>Outreach</option><option>Parked</option></select></label><label>Notes<textarea id="notes"></textarea></label>
-<div class="actions"><button id="saveBtn">Save Problem</button><button id="clearBtn" class="ghost">Clear</button></div></div></section>
-<section id="portfolio" class="panel"><div class="toolbar"><input id="search" placeholder="Search problems, buyers, notes..."><select id="filterCluster"><option value="">All clusters</option></select><select id="sort"><option value="weightedScore">Weighted score</option><option value="score">Base score</option><option value="pain">Pain</option><option value="spend">Existing spend</option><option value="ai">AI leverage</option><option value="interest">Founder interest</option><option value="updatedAt">Recently updated</option></select></div><div id="stats" class="stats"></div><div id="list"></div></section>
-<section id="clusters" class="panel"><div class="card"><h2>Problem Clusters</h2><p class="muted">Opportunity density by market pain cluster.</p><div id="clusterStats"></div></div></section>
-<section id="weights" class="panel"><div class="card"><h2>Scoring Weights</h2><p class="muted">Tune what matters most. Weighted score recalculates automatically.</p><div class="grid" id="weightsGrid"></div><div class="actions"><button id="saveWeightsBtn">Save Weights</button><button id="resetWeightsBtn" class="ghost">Reset</button></div></div></section>
-<section id="import" class="panel"><div class="card"><h2>Mass Import</h2><p class="muted">Import a JSON array, wrapper object, or pasted JSON.</p><label>Paste JSON here<textarea id="importText"></textarea></label><div class="actions"><button id="validateImportBtn">Validate</button><button id="importTextBtn" class="ghost">Import Pasted JSON</button></div><div id="importReport" class="report">No import checked yet.</div></div></section>
-<section id="research" class="panel"><div class="card"><h2>Research Opportunity</h2><p class="muted">Generate prompts for selected problems.</p><select id="promptProblem"></select><div class="promptGrid"><button class="promptBtn" data-prompt="discovery">Problem Discovery</button><button class="promptBtn" data-prompt="market">Market Scan</button><button class="promptBtn" data-prompt="buyer">Buyer Mapping</button><button class="promptBtn" data-prompt="solution">Solution Discovery</button></div><textarea id="promptOutput" readonly></textarea><button id="copyPromptBtn" class="ghost">Copy Prompt</button></div></section>
-</main><script src="app.js"></script></body></html>
+<section id="dashboard" class="panel active">
+  <div class="card">
+    <h2>Monday Morning Dashboard</h2>
+    <p class="muted">Top opportunities ranked by Commercialization Score.</p>
+    <div id="dashboardStats" class="stats"></div>
+    <div id="morningList"></div>
+  </div>
+</section>
+
+<section id="capture" class="panel">
+  <div class="card">
+    <div class="cardHeader">
+      <h2 id="formTitle">New Problem</h2>
+      <div id="formMeta" class="timestamp">Not saved yet</div>
+    </div>
+    <input id="id" type="hidden">
+
+    <label>Problem name<input id="problem" placeholder="e.g., Manual repetitive work wastes time"></label>
+    <label>Category<select id="category"><option>Revenue Generation</option><option>Attention & Information</option><option>Decision-Making</option><option>Coordination</option><option>Trust</option><option>Health Behavior</option><option>Relationships</option><option>Learning</option><option>Hiring</option><option>Time</option><option>Operations</option><option>Other</option></select></label>
+    <label>Cluster<select id="cluster"><option>Revenue</option><option>Hiring</option><option>Operations</option><option>Health</option><option>Trust</option><option>Learning</option><option>Coordination</option><option>Decision Making</option><option>Attention</option><option>Relationships</option><option>Time</option><option>Other</option></select></label>
+    <label>Tier<select id="tier"><option>Unranked</option><option>Tier 1 — Pursue</option><option>Tier 2 — Research</option><option>Tier 3 — Watchlist</option><option>Parked</option></select></label>
+    <label>Pipeline stage<select id="stage"><option>Captured</option><option>Researching</option><option>Validated</option><option>Prototype</option><option>Outreach</option><option>Revenue</option><option>Parked</option></select></label>
+
+    <label>Description<textarea id="description" placeholder="What hurts? What is broken?"></textarea></label>
+    <label>Who feels it?<textarea id="whoFeelsIt" placeholder="Customer segments, roles, industries"></textarea></label>
+
+    <h3>Market Score</h3>
+    <div class="grid">
+      <label>Pain<input id="pain" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+      <label>Frequency<input id="frequency" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+      <label>Economic impact<input id="economic" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+      <label>Existing spend<input id="spend" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+    </div>
+
+    <h3>Founder Fit Score</h3>
+    <div class="grid">
+      <label>Domain knowledge<input id="domainKnowledge" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+      <label>Buyer access<input id="buyerAccess" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+      <label>Credibility<input id="credibility" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+      <label>Personal interest<input id="personalInterest" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+    </div>
+
+    <h3>Accessibility Score</h3>
+    <div class="grid">
+      <label>Reachability<input id="reach" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+      <label>Competition intensity<input id="competition" inputmode="numeric" type="number" min="1" max="10" placeholder="1 = low, 10 = intense"></label>
+      <label>Sales cycle length<input id="salesCycle" inputmode="numeric" type="number" min="1" max="10" placeholder="1 = short, 10 = long"></label>
+      <label>Ease of validation<input id="validationEase" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+    </div>
+
+    <h3>AI Advantage Score</h3>
+    <div class="grid">
+      <label>AI leverage<input id="ai" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+      <label>Automation potential<input id="automationPotential" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+      <label>Data availability<input id="dataAvailability" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+      <label>Defensibility<input id="defensibility" inputmode="numeric" type="number" min="1" max="10" placeholder="1-10"></label>
+    </div>
+
+    <label>Current solutions<textarea id="solutions"></textarea></label>
+    <label>Common complaints<textarea id="complaints"></textarea></label>
+    <label>Buyer<input id="buyer"></label>
+    <label>Champion<input id="champion"></label>
+    <label>Business model ideas<textarea id="businessModel"></textarea></label>
+    <div class="dateGrid">
+      <label>Next action<input id="nextAction"></label>
+      <label>Follow-up date/time<input id="followUpAt" type="datetime-local"></label>
+    </div>
+    <label>Status<select id="status"><option>Captured</option><option>Researching</option><option>Scored</option><option>Prioritized</option><option>Validation</option><option>Outreach</option><option>Parked</option></select></label>
+    <label>Notes<textarea id="notes"></textarea></label>
+    <div class="actions"><button id="saveBtn">Save Problem</button><button id="clearBtn" class="ghost">Clear</button></div>
+  </div>
+</section>
+
+<section id="portfolio" class="panel">
+  <div class="toolbar">
+    <input id="search" placeholder="Search problems, buyers, notes...">
+    <select id="filterCluster"><option value="">All clusters</option></select>
+    <select id="sort"><option value="commercializationScore">Commercialization score</option><option value="marketScore">Market score</option><option value="founderFitScore">Founder fit</option><option value="accessibilityScore">Accessibility</option><option value="aiAdvantageScore">AI advantage</option><option value="updatedAt">Recently updated</option></select>
+  </div>
+  <div id="stats" class="stats"></div>
+  <div id="list"></div>
+</section>
+
+<section id="clusters" class="panel"><div class="card"><h2>Cluster Heatmap</h2><p class="muted">Opportunity density and average commercialization score by cluster.</p><div id="clusterStats"></div></div></section>
+<section id="pipeline" class="panel"><div class="card"><h2>Opportunity Pipeline</h2><p class="muted">Captured → Researching → Validated → Prototype → Outreach → Revenue</p><div id="pipelineStats"></div></div></section>
+<section id="planner" class="panel"><div class="card"><h2>Commercialization Planner</h2><select id="plannerProblem"></select><div id="planOutput" class="planBox"></div><button id="copyPlanBtn" class="ghost">Copy Plan</button></div></section>
+<section id="weights" class="panel"><div class="card"><h2>Commercialization Formula</h2><p class="muted">Default: 35% Market + 30% Founder Fit + 20% Accessibility + 15% AI Advantage.</p><div class="grid" id="weightsGrid"></div><div class="actions"><button id="saveWeightsBtn">Save Weights</button><button id="resetWeightsBtn" class="ghost">Reset</button></div></div></section>
+<section id="import" class="panel"><div class="card"><h2>Mass Import</h2><p class="muted">Import a JSON array, wrapper object, or pasted JSON. v6 will normalize v5/v4 records into the new scoring model.</p><label>Paste JSON here<textarea id="importText"></textarea></label><div class="actions"><button id="validateImportBtn">Validate</button><button id="importTextBtn" class="ghost">Import Pasted JSON</button></div><div id="importReport" class="report">No import checked yet.</div></div></section>
+<section id="research" class="panel"><div class="card"><h2>Research Opportunity</h2><p class="muted">Generate prompts for selected opportunities.</p><select id="promptProblem"></select><div class="promptGrid"><button class="promptBtn" data-prompt="discovery">Problem Discovery</button><button class="promptBtn" data-prompt="market">Market Scan</button><button class="promptBtn" data-prompt="buyer">Buyer Mapping</button><button class="promptBtn" data-prompt="solution">Solution Discovery</button></div><textarea id="promptOutput" readonly></textarea><button id="copyPromptBtn" class="ghost">Copy Prompt</button></div></section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
